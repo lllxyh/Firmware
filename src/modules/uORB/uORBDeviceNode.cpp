@@ -251,7 +251,8 @@ uORB::DeviceNode::write(cdev::file_t *filp, const char *buffer, size_t buflen)
 	ATOMIC_ENTER;
 	/* wrap-around happens after ~49 days, assuming a publisher rate of 1 kHz */
 	unsigned generation = _generation.fetch_add(1);
-
+	hrt_abstime *timestamp = (hrt_abstime *)buffer;
+	*timestamp = hrt_absolute_time();
 	memcpy(_data + (_meta->o_size * (generation % _queue_size)), buffer, _meta->o_size);
 
 	// callbacks
